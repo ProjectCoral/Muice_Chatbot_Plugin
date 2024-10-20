@@ -2,7 +2,6 @@ import os
 import shutil
 
 import threading
-from utils.auto_prompt import AutoPrompt
 
 class Command:
     """
@@ -82,13 +81,3 @@ class Command:
         self.Muice.remove_last_chat_memory()
         self.Muice.history = self.Muice.get_recent_chat_memory()
         return "undoed"
-
-    def command_thread(self, commands):
-        AutoPrompt.load_commands(commands)
-        try:
-            while True:
-                im_text = AutoPrompt.prompt()
-                response = self.run(im_text)
-                print(response)
-        except KeyboardInterrupt:
-            pass

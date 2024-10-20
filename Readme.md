@@ -6,6 +6,11 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
+# 注意🚨
+
+这个仓库是 [Muice-Chatbot](https://github.com/Moemu/Muice-Chatbot) 的 Coral 的聊天机器人插件，不要直接运行，请在 Coral 机器人中安装这个插件。
+
+想要了解更多关于 Coral 机器人框架？ 请访问 [Coral](https://github.com/ProjectCoral/Coral)
 
 # 介绍✨
 
