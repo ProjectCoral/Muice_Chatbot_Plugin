@@ -88,11 +88,11 @@ class Muice:
         """
         获取最近一条记忆
         """
-        if not os.path.isfile(f'./memory/{self.user_id}.json') or self.user_id == None:
+        if not os.path.isfile(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json') or self.user_id == None:
             return []
         else:
             try:
-                with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
+                with open(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
                     data = f.readlines()
                 logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
                 if len(data) == 0:
@@ -102,9 +102,9 @@ class Muice:
                 return memory['history']
             except Exception as e:
                 logging.error(f"记忆文件内部发生了一个错误，已更名此文件: {e}")
-                if os.path.isfile(f'./memory/{self.user_id}.json.bak'):
-                    os.remove(f'./memory/{self.user_id}.json.bak')
-                os.rename(f'./memory/{self.user_id}.json', f'./memory/{self.user_id}.json.bak')
+                if os.path.isfile(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json.bak'):
+                    os.remove(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json.bak')
+                os.rename(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json', f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json.bak')
                 return []
 
     def save_chat_memory(self, reply: str):
@@ -119,12 +119,12 @@ class Muice:
         image_matches = re.search(image_pattern,self.user_text)
         if image_matches:
             image_caption = image_matches.group(1)
-            with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
+            with open(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
                 logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
                 json.dump({'prompt': image_caption, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
                 f.write('\n')
             return
-        with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
+        with open(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
             logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
             json.dump({'prompt': self.user_text, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
             f.write('\n')
@@ -135,15 +135,15 @@ class Muice:
         """
         删除最后一条记忆
         """
-        if not os.path.isfile(f'./memory/{self.user_id}.json'):
+        if not os.path.isfile(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json'):
             return
-        with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
+        with open(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
             data = f.readlines()
             if len(data) > 1:
                 del data[-1]
             else:
                 data = []
-        with open(f'./memory/{self.user_id}.json', 'w', encoding='utf-8') as f:
+        with open(f'./data/Muice_Chatbot_Plugin/memory/{self.user_id}.json', 'w', encoding='utf-8') as f:
             f.writelines(data)
 
     def refresh(self) -> str:
