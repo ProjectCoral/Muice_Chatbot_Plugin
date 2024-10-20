@@ -6,3 +6,4 @@ memory
 configs.json
 Muice
 image_data
+__pycache__/

@@ -32,7 +32,7 @@ class ImageDatabase:
         if not os.path.exists(self.storge_dir):
             os.makedirs(self.storge_dir)
         try:
-            self.conn = sqlite3.connect(db_name)
+            self.conn = sqlite3.connect(db_name, check_same_thread=False)
             self.conn.execute('''
             CREATE TABLE IF NOT EXISTS image_data
             (id INTEGER PRIMARY KEY,
