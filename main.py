@@ -60,7 +60,7 @@ if enable_ofa_image:
 
 muice_app = Muice(model,memory,configs['read_memory_from_file'], configs['known_topic_probability'],
                   configs['time_topic_probability'])
-def register_function(register, config, perm_system):
+def register_plugin(register, config, perm_system):
     register.register_function("process_text", Chatbot(register, config, perm_system).chat)
     register.register_function("process_image", Chatbot(register, config, perm_system).image_chat)
     register.register_function("store_memory", Chatbot(register, config, perm_system).store_memory)
