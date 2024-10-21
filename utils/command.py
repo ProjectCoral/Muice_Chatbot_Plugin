@@ -48,7 +48,6 @@ class Command:
         }
         for command, function in default_commands.items():
             self.register_command(command, function)
-        threading.Thread(target=self.command_thread, args=(default_commands,)).start()
 
     def default_help(self):
         help_text = ("/clean 清空本轮对话历史 \n "

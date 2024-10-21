@@ -5,7 +5,12 @@ import sys
 import os
 import asyncio
 
-from plugins.Muice_Chatbot_Plugin.Muice import Muice
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+
+from Muice import Muice
 
 logger = logging.getLogger(__name__)
 
@@ -30,13 +35,13 @@ model_name_or_path = configs["model_name_or_path"]
 adapter_name_or_path = configs["adapter_name_or_path"]
 
 # 模型加载
-model_adapter = importlib.import_module(f"plugins.Muice_Chatbot_Plugin.llm.{model_loader}")
+model_adapter = importlib.import_module(f"llm.{model_loader}")
 model = model_adapter.llm(model_name_or_path, adapter_name_or_path)
 
 # Faiss配置
 enable_faiss = configs.get('enable_faiss', False)
 if enable_faiss:
-    from plugins.Muice_Chatbot_Plugin.llm.faiss_memory import FAISSMemory
+    from llm.faiss_memory import FAISSMemory
     import signal
     memory = FAISSMemory(model_path=configs["sentence_transformer_model_name_or_path"],db_path="./data/Muice_Chatbot_Plugin/memory/faiss_index.faiss",top_k=2)
     def handle_interrupt(faiss_memory: FAISSMemory):
@@ -51,10 +56,10 @@ else:
 # OFA图像模型
 enable_ofa_image = configs["enable_ofa_image"]
 if enable_ofa_image:
-    from plugins.Muice_Chatbot_Plugin.utils.ofa_image_process import ImageCaptioningPipeline
+    from utils.ofa_image_process import ImageCaptioningPipeline
     ofa_image_model_name_or_path = configs["ofa_image_model_name_or_path"]
     ImageCaptioningPipeline.load_model(ofa_image_model_name_or_path)
-    from plugins.Muice_Chatbot_Plugin.utils.image_database import ImageDatabase
+    from utils.image_database import ImageDatabase
     image_db = ImageDatabase(db_name='./data/Muice_Chatbot_Plugin/image_data/image_data.db')
 
 
