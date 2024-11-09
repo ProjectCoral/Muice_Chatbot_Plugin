@@ -66,6 +66,9 @@ if enable_ofa_image:
 muice_app = Muice(model,memory,configs['read_memory_from_file'], configs['known_topic_probability'],
                   configs['time_topic_probability'])
 def register_plugin(register, config, perm_system):
+    perm_system.register_perm("muice_chatbot", "muice_chatbot_plugin base permisson")
+    perm_system.register_perm("muice_chatbot.reply.group", "muice_chatbot_plugin group reply permission")
+    perm_system.register_perm("muice_chatbot.reply.private", "muice_chatbot_plugin private reply permission")
     register.register_function("process_text", Chatbot(register, config, perm_system).chat)
     register.register_function("process_image", Chatbot(register, config, perm_system).image_chat)
     register.register_function("store_memory", Chatbot(register, config, perm_system).store_memory)
@@ -86,6 +89,13 @@ class Chatbot:
         user_qq = message['sender_user_id']
         group_id = message['group_id']
 
+        if group_id == -1:
+            if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.private"], user_qq, group_id):
+                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+        else:
+            if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.group"], '-1', group_id):
+                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+            
         response = muice_app.ask(text, user_qq, group_id)
 
         if configs['Reply_Wait']:
@@ -113,7 +123,14 @@ class Chatbot:
         if not enable_ofa_image:
             logger.warning("OFA图像模型未启用，无法进行图像对话")
             return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
-        
+
+        if group_id == -1:
+            if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.private"], user_qq, group_id):
+                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+        else:
+            if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.group"], '-1', group_id):
+                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+
         message = await ImageCaptioningPipeline().generate_caption(image_url)
         await image_db.insert_data(message, image_url)
         message = f"(收到图片描述：{message})"
