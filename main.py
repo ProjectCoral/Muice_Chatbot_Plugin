@@ -93,10 +93,10 @@ class Chatbot:
 
         if group_id == -1:
             if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.private"], user_qq, group_id):
-                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+                return {"action": "send_msg", "message": None, "sender_user_id": user_qq, "group_id": group_id}
         else:
             if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.group"], '-1', group_id):
-                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+                return {"action": "send_msg", "message": None, "sender_user_id": user_qq, "group_id": group_id}
             
         response = muice_app.ask(text, user_qq, group_id)
 
@@ -105,7 +105,7 @@ class Chatbot:
 
         response =  await self.search_image(response)
 
-        return {"message": response, "sender_user_id": user_qq, "group_id": group_id}
+        return {"action": "send_msg", "message": response, "sender_user_id": user_qq, "group_id": group_id}
     
     async def store_memory(self, message):
         text = message['message']
@@ -124,14 +124,14 @@ class Chatbot:
 
         if not enable_ofa_image:
             logger.warning("OFA图像模型未启用，无法进行图像对话")
-            return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+            return {"action": "send_msg", "message": None, "sender_user_id": user_qq, "group_id": group_id}
 
         if group_id == -1:
             if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.private"], user_qq, group_id):
-                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+                return {"action": "send_msg", "message": None, "sender_user_id": user_qq, "group_id": group_id}
         else:
             if not self.perm_system.check_perm(["muice_chatbot", "muice_chatbot.reply.group"], '-1', group_id):
-                return {"message": None, "sender_user_id": user_qq, "group_id": group_id}
+                return {"action": "send_msg", "message": None, "sender_user_id": user_qq, "group_id": group_id}
 
         message = await ImageCaptioningPipeline().generate_caption(image_url)
         await image_db.insert_data(message, image_url)
@@ -144,7 +144,7 @@ class Chatbot:
 
         response =  await self.search_image(response)
 
-        return {"message": response, "sender_user_id": user_qq, "group_id": group_id}
+        return {"action": "send_msg", "message": response, "sender_user_id": user_qq, "group_id": group_id}
     
     async def search_image(self, reply):
         if enable_ofa_image:
