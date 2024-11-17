@@ -111,8 +111,8 @@ class Muice:
         """
         保存至记忆数据库
         """
-        if not os.path.isdir('memory'):
-            os.mkdir('memory')
+        if not os.path.isdir('./data/Muice_Chatbot_Plugin/memory'):
+            os.mkdir('./data/Muice_Chatbot_Plugin/memory')
         if not self.user_id:
             return
         image_pattern = r"收到图片描述：([^)]+)"

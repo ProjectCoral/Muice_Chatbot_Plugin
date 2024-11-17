@@ -69,10 +69,14 @@ def register_plugin(register, config, perm_system):
     perm_system.register_perm("muice_chatbot", "muice_chatbot_plugin base permisson")
     perm_system.register_perm("muice_chatbot.reply.group", "muice_chatbot_plugin group reply permission")
     perm_system.register_perm("muice_chatbot.reply.private", "muice_chatbot_plugin private reply permission")
-    register.register_function("process_text", Chatbot(register, config, perm_system).chat)
-    register.register_function("process_image", Chatbot(register, config, perm_system).image_chat)
-    register.register_function("store_memory", Chatbot(register, config, perm_system).store_memory)
-
+    perm_system.register_perm("muice_chatbot.commands", "muice_chatbot_plugin commands permission")
+    chatbot_instance = Chatbot(register, config, perm_system)
+    register.register_function("process_text", chatbot_instance.chat)
+    register.register_function("process_image", chatbot_instance.image_chat)
+    register.register_function("store_memory", chatbot_instance.store_memory)
+    register.register_command("refresh", "刷新对话记录", chatbot_instance.refresh_memory, ["muice_chatbot", "muice_chatbot.commands"])
+    register.register_command("clear", "清空对话记录", chatbot_instance.clear_memory, ["muice_chatbot", "muice_chatbot.commands"])
+    register.register_command("undo", "撤销对话", chatbot_instance.undo_memory, ["muice_chatbot", "muice_chatbot.commands"])
 
 class Chatbot:
     register = None
@@ -157,3 +161,25 @@ class Chatbot:
                     reply_list = [f"[CQ:image,url={url}]"]
                     return reply_list
         return reply
+    
+    def refresh_memory(self, *args):
+        return muice_app.refresh()
+    
+    def clear_memory(self, *args):
+        try:
+            for file in os.listdir('./data/Muice_Chatbot_Plugin/memory/'):
+                if file.endswith('.json'):
+                    os.remove(os.path.join('./data/Muice_Chatbot_Plugin/memory/', file))
+            return "memory cleared"
+        except:
+            return "memory clear failed"
+        
+    def undo_memory(self, *args):
+        try:
+            muice_app.remove_last_chat_memory()
+            muice_app.history = muice_app.get_recent_chat_memory()
+            return "memory undone"
+        except:
+            return "memory undo failed"
+        
+
