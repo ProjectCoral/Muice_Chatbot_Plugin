@@ -74,9 +74,7 @@ def register_plugin(register, config, perm_system):
     register.register_function("process_text", chatbot_instance.chat)
     register.register_function("process_image", chatbot_instance.image_chat)
     register.register_function("store_memory", chatbot_instance.store_memory)
-    register.register_command("refresh", "刷新对话记录", chatbot_instance.refresh_memory, ["muice_chatbot", "muice_chatbot.commands"])
-    register.register_command("clear", "清空对话记录", chatbot_instance.clear_memory, ["muice_chatbot", "muice_chatbot.commands"])
-    register.register_command("undo", "撤销对话", chatbot_instance.undo_memory, ["muice_chatbot", "muice_chatbot.commands"])
+    register.register_command("muice", "muice_chatbot_plugin commands", chatbot_instance.muice_commands, ["muice_chatbot", "muice_chatbot.commands"])
 
 class Chatbot:
     register = None
@@ -162,10 +160,26 @@ class Chatbot:
                     return reply_list
         return reply
     
-    def refresh_memory(self, *args):
+    def muice_commands(self, *args):
+        command_args = ' '.join(args)
+        if not command_args:
+            return "Usage: muice <refresh|clear|undo>"
+        try:
+            if command_args.strip() == "refresh":
+                return self.refresh_memory()
+            elif command_args.strip() == "clear":
+                return self.clear_memory()
+            elif command_args.strip() == "undo":
+                return self.undo_memory()
+            else:
+                return "Usage: muice <refresh|clear|undo>"
+        except:
+            return "Invalid format. \nUsage: muice <refresh|clear|undo>"
+
+    def refresh_memory(self):
         return muice_app.refresh()
     
-    def clear_memory(self, *args):
+    def clear_memory(self):
         try:
             for file in os.listdir('./data/Muice_Chatbot_Plugin/memory/'):
                 if file.endswith('.json'):
@@ -174,7 +188,7 @@ class Chatbot:
         except:
             return "memory clear failed"
         
-    def undo_memory(self, *args):
+    def undo_memory(self):
         try:
             muice_app.remove_last_chat_memory()
             muice_app.history = muice_app.get_recent_chat_memory()
